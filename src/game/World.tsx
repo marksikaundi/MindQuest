@@ -1,6 +1,7 @@
 import { useFrame } from '@react-three/fiber';
-import { useLayoutEffect, useRef, useState, type MutableRefObject } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState, type MutableRefObject } from 'react';
 import type { Group, Mesh } from 'three';
+import * as THREE from 'three';
 
 import { passesRing, shipCollides } from './systems/collision';
 import {
@@ -28,12 +29,95 @@ function speedForScore(score: number): number {
   return Math.min(MAX_SPEED, BASE_SPEED + score * SPEED_PER_SCORE);
 }
 
+function FloorStripes() {
+  const stripes = useMemo(() => {
+    const items: { z: number; key: string }[] = [];
+    for (let i = 0; i < 28; i += 1) {
+      items.push({ z: -i * 3.2, key: `stripe-${i}` });
+    }
+    return items;
+  }, []);
+
+  const groupRef = useRef<Group>(null);
+
+  useFrame(() => {
+    if (!groupRef.current) {
+      return;
+    }
+    const { status, score } = useGameStore.getState();
+    const speed = status === 'playing' ? speedForScore(score) : BASE_SPEED * 0.25;
+    const scroll = (performance.now() * 0.001 * speed) % 3.2;
+    groupRef.current.position.z = scroll;
+  });
+
+  return (
+    <group ref={groupRef}>
+      {stripes.map((stripe) => (
+        <mesh
+          key={stripe.key}
+          rotation={[-Math.PI / 2, 0, 0]}
+          position={[0, 0.01, stripe.z]}
+        >
+          <planeGeometry args={[0.18, 1.6]} />
+          <meshStandardMaterial
+            color="#0affd7"
+            emissive="#0affd7"
+            emissiveIntensity={0.65}
+            transparent
+            opacity={0.55}
+          />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+function WallRibs({ side }: { side: 'left' | 'right' }) {
+  const x = side === 'left' ? -CORRIDOR.halfWidth : CORRIDOR.halfWidth;
+  const ribs = useMemo(() => {
+    return Array.from({ length: 22 }, (_, i) => ({
+      z: -i * 4,
+      key: `${side}-rib-${i}`,
+    }));
+  }, [side]);
+  const groupRef = useRef<Group>(null);
+
+  useFrame(() => {
+    if (!groupRef.current) {
+      return;
+    }
+    const { status, score } = useGameStore.getState();
+    const speed = status === 'playing' ? speedForScore(score) : BASE_SPEED * 0.25;
+    const scroll = (performance.now() * 0.001 * speed) % 4;
+    groupRef.current.position.z = scroll;
+  });
+
+  return (
+    <group ref={groupRef}>
+      {ribs.map((rib) => (
+        <mesh key={rib.key} position={[x, CORRIDOR.wallHeight * 0.45, rib.z]}>
+          <boxGeometry args={[0.18, CORRIDOR.wallHeight * 0.9, 0.12]} />
+          <meshStandardMaterial
+            color="#10343c"
+            emissive="#0affd7"
+            emissiveIntensity={0.28}
+            metalness={0.4}
+            roughness={0.45}
+          />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
 export function World({ shipXRef, resetToken }: WorldProps) {
   const [entities, setEntities] = useState<WorldEntity[]>(() => initialEntities());
   const entitiesRef = useRef(entities);
   const groupRefs = useRef<Map<number, Group>>(new Map());
   const wallLeft = useRef<Mesh>(null);
   const wallRight = useRef<Mesh>(null);
+  const railLeft = useRef<Mesh>(null);
+  const railRight = useRef<Mesh>(null);
 
   useLayoutEffect(() => {
     const next = initialEntities();
@@ -60,7 +144,12 @@ export function World({ shipXRef, resetToken }: WorldProps) {
       if (group) {
         group.position.set(entity.position.x, entity.position.y, entity.position.z);
         if (entity.kind === 'ring') {
-          group.rotation.z += delta * 1.2;
+          group.rotation.z += delta * 1.6;
+          const pulse = 1 + Math.sin(performance.now() * 0.008 + entity.id) * 0.04;
+          group.scale.setScalar(pulse);
+        } else {
+          group.rotation.y += delta * 1.1;
+          group.rotation.x += delta * 0.45;
         }
       }
 
@@ -82,12 +171,8 @@ export function World({ shipXRef, resetToken }: WorldProps) {
         const group = groupRefs.current.get(entity.id);
         if (group) {
           group.position.set(entity.position.x, entity.position.y, entity.position.z);
-          if (entity.kind === 'obstacle') {
-            const mesh = group.children[0] as Mesh | undefined;
-            if (mesh) {
-              mesh.scale.set(1, 1, 1);
-            }
-          }
+          group.scale.set(1, 1, 1);
+          group.rotation.set(0, 0, 0);
         }
       }
     }
@@ -99,43 +184,118 @@ export function World({ shipXRef, resetToken }: WorldProps) {
     if (wallRight.current) {
       wallRight.current.position.z = -scroll;
     }
+    if (railLeft.current) {
+      railLeft.current.position.z = -scroll * 0.5;
+    }
+    if (railRight.current) {
+      railRight.current.position.z = -scroll * 0.5;
+    }
   });
 
   return (
     <group>
-      <mesh
-        rotation={[-Math.PI / 2, 0, 0]}
-        position={[0, -0.05, -20]}
-        receiveShadow
-      >
-        <planeGeometry args={[CORRIDOR.halfWidth * 2.4, 90]} />
-        <meshStandardMaterial color="#0a1620" roughness={0.95} metalness={0.05} />
+      {/* Floor plane */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.02, -22]} receiveShadow>
+        <planeGeometry args={[CORRIDOR.halfWidth * 2.6, 100]} />
+        <meshStandardMaterial
+          color="#07131c"
+          roughness={0.92}
+          metalness={0.08}
+        />
       </mesh>
 
+      {/* Floor edge glows */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-CORRIDOR.halfWidth + 0.08, 0.02, -22]}>
+        <planeGeometry args={[0.1, 100]} />
+        <meshStandardMaterial
+          color="#0affd7"
+          emissive="#0affd7"
+          emissiveIntensity={0.9}
+          transparent
+          opacity={0.7}
+        />
+      </mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[CORRIDOR.halfWidth - 0.08, 0.02, -22]}>
+        <planeGeometry args={[0.1, 100]} />
+        <meshStandardMaterial
+          color="#0affd7"
+          emissive="#0affd7"
+          emissiveIntensity={0.9}
+          transparent
+          opacity={0.7}
+        />
+      </mesh>
+
+      <FloorStripes />
+
+      {/* Side walls */}
       <mesh
         ref={wallLeft}
-        position={[-CORRIDOR.halfWidth, CORRIDOR.wallHeight / 2, -20]}
+        position={[-CORRIDOR.halfWidth, CORRIDOR.wallHeight / 2, -22]}
       >
-        <boxGeometry args={[0.12, CORRIDOR.wallHeight, CORRIDOR.wallLength]} />
+        <boxGeometry args={[0.1, CORRIDOR.wallHeight, CORRIDOR.wallLength]} />
         <meshStandardMaterial
-          color="#0d2a33"
-          emissive="#0affd7"
-          emissiveIntensity={0.15}
+          color="#0a222b"
+          emissive="#087a6a"
+          emissiveIntensity={0.22}
           transparent
-          opacity={0.85}
+          opacity={0.88}
+          metalness={0.35}
+          roughness={0.4}
         />
       </mesh>
       <mesh
         ref={wallRight}
-        position={[CORRIDOR.halfWidth, CORRIDOR.wallHeight / 2, -20]}
+        position={[CORRIDOR.halfWidth, CORRIDOR.wallHeight / 2, -22]}
       >
-        <boxGeometry args={[0.12, CORRIDOR.wallHeight, CORRIDOR.wallLength]} />
+        <boxGeometry args={[0.1, CORRIDOR.wallHeight, CORRIDOR.wallLength]} />
         <meshStandardMaterial
-          color="#0d2a33"
-          emissive="#0affd7"
-          emissiveIntensity={0.15}
+          color="#0a222b"
+          emissive="#087a6a"
+          emissiveIntensity={0.22}
           transparent
-          opacity={0.85}
+          opacity={0.88}
+          metalness={0.35}
+          roughness={0.4}
+        />
+      </mesh>
+
+      <WallRibs side="left" />
+      <WallRibs side="right" />
+
+      {/* Top rails */}
+      <mesh
+        ref={railLeft}
+        position={[-CORRIDOR.halfWidth * 0.92, CORRIDOR.wallHeight - 0.1, -22]}
+      >
+        <boxGeometry args={[0.08, 0.08, CORRIDOR.wallLength]} />
+        <meshStandardMaterial
+          color="#39e6ff"
+          emissive="#39e6ff"
+          emissiveIntensity={0.75}
+        />
+      </mesh>
+      <mesh
+        ref={railRight}
+        position={[CORRIDOR.halfWidth * 0.92, CORRIDOR.wallHeight - 0.1, -22]}
+      >
+        <boxGeometry args={[0.08, 0.08, CORRIDOR.wallLength]} />
+        <meshStandardMaterial
+          color="#39e6ff"
+          emissive="#39e6ff"
+          emissiveIntensity={0.75}
+        />
+      </mesh>
+
+      {/* Horizon glow */}
+      <mesh position={[0, 1.2, -48]}>
+        <planeGeometry args={[18, 6]} />
+        <meshBasicMaterial
+          color="#0affd7"
+          transparent
+          opacity={0.08}
+          depthWrite={false}
+          side={THREE.DoubleSide}
         />
       </mesh>
 
@@ -156,33 +316,70 @@ export function World({ shipXRef, resetToken }: WorldProps) {
           }}
         >
           {entity.kind === 'ring' ? (
-            <mesh rotation={[0, Math.PI / 2, 0]}>
-              <torusGeometry args={[entity.radius, RING_TUBE, 12, 36]} />
-              <meshStandardMaterial
+            <>
+              <mesh rotation={[0, Math.PI / 2, 0]}>
+                <torusGeometry args={[entity.radius, RING_TUBE, 14, 48]} />
+                <meshStandardMaterial
+                  color="#7ef0ff"
+                  emissive="#17c8ff"
+                  emissiveIntensity={1.35}
+                  metalness={0.45}
+                  roughness={0.18}
+                />
+              </mesh>
+              <mesh rotation={[0, Math.PI / 2, 0]}>
+                <torusGeometry
+                  args={[entity.radius * 0.72, RING_TUBE * 0.45, 10, 32]}
+                />
+                <meshStandardMaterial
+                  color="#0affd7"
+                  emissive="#0affd7"
+                  emissiveIntensity={0.9}
+                  transparent
+                  opacity={0.55}
+                />
+              </mesh>
+              <pointLight
                 color="#39e6ff"
-                emissive="#17c8ff"
-                emissiveIntensity={1.1}
-                metalness={0.4}
-                roughness={0.2}
+                intensity={1.1}
+                distance={4.5}
+                decay={2}
               />
-            </mesh>
+            </>
           ) : (
-            <mesh castShadow>
-              <boxGeometry
-                args={[
-                  entity.size.x * 2,
-                  entity.size.y * 2,
-                  entity.size.z * 2,
-                ]}
-              />
-              <meshStandardMaterial
+            <>
+              <mesh castShadow>
+                <octahedronGeometry
+                  args={[Math.max(entity.size.x, entity.size.y) * 1.15, 0]}
+                />
+                <meshStandardMaterial
+                  color="#ff4d6d"
+                  emissive="#ff1744"
+                  emissiveIntensity={0.7}
+                  metalness={0.35}
+                  roughness={0.28}
+                />
+              </mesh>
+              <mesh scale={[1.35, 1.35, 1.35]}>
+                <octahedronGeometry
+                  args={[Math.max(entity.size.x, entity.size.y) * 1.15, 0]}
+                />
+                <meshStandardMaterial
+                  color="#ff8aa0"
+                  emissive="#ff4d6d"
+                  emissiveIntensity={0.35}
+                  transparent
+                  opacity={0.22}
+                  depthWrite={false}
+                />
+              </mesh>
+              <pointLight
                 color="#ff4d6d"
-                emissive="#ff1744"
-                emissiveIntensity={0.55}
-                metalness={0.2}
-                roughness={0.4}
+                intensity={0.85}
+                distance={3.5}
+                decay={2}
               />
-            </mesh>
+            </>
           )}
         </group>
       ))}

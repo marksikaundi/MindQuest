@@ -20,9 +20,9 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: '#061018',
+    backgroundColor: '#040c14',
   },
   screen: {
-    backgroundColor: '#061018',
+    backgroundColor: '#040c14',
   },
 });

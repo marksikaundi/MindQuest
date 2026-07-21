@@ -16,12 +16,14 @@ export function hitsObstacle(shipX: number, shipZ: number, entity: WorldEntity):
 
   const dx = Math.abs(shipX - entity.position.x);
   const dz = Math.abs(shipZ - entity.position.z);
-  const dy = Math.abs(0 - entity.position.y);
+  const dy = Math.abs(0.05 - entity.position.y);
+  // Slightly forgiving hitbox so motion feels fair at higher speeds
+  const pad = SHIP_RADIUS * 0.82;
 
   return (
-    dx < entity.size.x + SHIP_RADIUS &&
-    dy < entity.size.y + SHIP_RADIUS &&
-    dz < entity.size.z + SHIP_RADIUS
+    dx < entity.size.x + pad &&
+    dy < entity.size.y + pad &&
+    dz < entity.size.z + pad
   );
 }
 
@@ -37,9 +39,9 @@ export function passesRing(shipX: number, shipZ: number, entity: WorldEntity): b
   }
 
   const dx = shipX - entity.position.x;
-  const dy = 0 - entity.position.y;
+  const dy = 0.08 - entity.position.y;
   const radial = Math.hypot(dx, dy);
-  const inner = entity.radius - RING_TUBE - SHIP_RADIUS * 0.35;
+  const inner = entity.radius - RING_TUBE - SHIP_RADIUS * 0.25;
 
   return radial < inner;
 }

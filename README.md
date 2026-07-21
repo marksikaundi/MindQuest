@@ -22,8 +22,8 @@ npm start       # Expo Go on a phone
 
 ### Controls
 
-- **Mobile:** swipe, or hold left / right half of the screen
-- **Web:** drag, click sides, or use `A` / `D` / arrow keys
+- **Mobile:** drag anywhere — your finger maps to ship lane position
+- **Web:** drag, or hold `A` / `D` / arrow keys to steer
 
 ## Scripts
 

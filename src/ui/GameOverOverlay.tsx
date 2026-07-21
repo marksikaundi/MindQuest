@@ -22,7 +22,7 @@ export function GameOverOverlay({ onRetry }: GameOverOverlayProps) {
     <View style={styles.wrap}>
       <Text style={styles.title}>SIGNAL LOST</Text>
       <Text style={styles.score}>{score}</Text>
-      <Text style={styles.sub}>
+      <Text style={[styles.sub, isBest && styles.subBest]}>
         {isBest ? 'New best run' : `Best · ${highScore}`}
       </Text>
       <Pressable
@@ -41,7 +41,7 @@ export function GameOverOverlay({ onRetry }: GameOverOverlayProps) {
 const styles = StyleSheet.create({
   wrap: {
     ...StyleSheet.absoluteFill,
-    backgroundColor: 'rgba(6, 16, 24, 0.78)',
+    backgroundColor: 'rgba(4, 12, 20, 0.72)',
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 28,
@@ -50,33 +50,48 @@ const styles = StyleSheet.create({
     color: '#ff8aa0',
     fontSize: 28,
     fontWeight: '800',
-    letterSpacing: 4,
+    letterSpacing: 5,
+    textShadowColor: 'rgba(255, 77, 109, 0.45)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 14,
   },
   score: {
-    marginTop: 16,
+    marginTop: 18,
     color: '#e8fffb',
-    fontSize: 64,
+    fontSize: 72,
     fontWeight: '900',
+    letterSpacing: 2,
+    fontVariant: ['tabular-nums'],
   },
   sub: {
     marginTop: 8,
     color: '#9fd4cc',
     fontSize: 15,
+    letterSpacing: 0.5,
+  },
+  subBest: {
+    color: '#0affd7',
+    fontWeight: '700',
   },
   cta: {
-    marginTop: 36,
+    marginTop: 40,
     backgroundColor: '#39e6ff',
-    paddingHorizontal: 42,
-    paddingVertical: 14,
-    borderRadius: 4,
+    paddingHorizontal: 48,
+    paddingVertical: 15,
+    borderRadius: 2,
+    shadowColor: '#39e6ff',
+    shadowOpacity: 0.4,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 0 },
   },
   ctaPressed: {
-    opacity: 0.85,
+    opacity: 0.88,
+    transform: [{ scale: 0.97 }],
   },
   ctaText: {
-    color: '#061018',
+    color: '#040c14',
     fontSize: 18,
     fontWeight: '900',
-    letterSpacing: 3,
+    letterSpacing: 4,
   },
 });
