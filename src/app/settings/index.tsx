@@ -24,7 +24,8 @@ export default function SettingsScreen() {
 
   return (
     <Screen>
-      <AppText size={28} weight="800">Settings</AppText>
+      <AppText size={28} weight="800">About</AppText>
+      <AppText weight="800">Play. Explore. Learn. Grow.</AppText>
       {note ? <AppText>{note}</AppText> : null}
       <Card>
         <AppText weight="800">Audio</AppText>
