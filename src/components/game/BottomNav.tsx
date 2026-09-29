@@ -11,7 +11,7 @@ const tabs = [
   { href: '/world', label: 'Explore', icon: 'map' },
   { href: '/minigames', label: 'Mini-Games', icon: 'game-controller' },
   { href: '/quests', label: 'Quests', icon: 'flag' },
-  { href: '/character', label: 'Profile', icon: 'person' },
+  { href: '/character', label: 'Hero', icon: 'body' },
 ] as const;
 
 function isActive(pathname: string, href: string) {

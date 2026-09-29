@@ -20,7 +20,7 @@ export function GameHeader() {
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Open profile"
+          accessibilityLabel="Open hero"
           onPress={() => router.push('/character')}
           style={{ width: 52, height: 52, borderRadius: 26, overflow: 'hidden', backgroundColor: colors.sky, alignItems: 'center' }}>
           <View style={{ marginTop: -8 }}>

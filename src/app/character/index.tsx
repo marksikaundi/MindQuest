@@ -31,7 +31,7 @@ export default function CharacterScreen() {
 
   return (
     <Screen tabBar>
-      <AppText size={28} weight="800">Profile</AppText>
+      <AppText size={28} weight="800">Hero</AppText>
       <Card>
         <View style={{ alignItems: 'center' }}>
           <Avatar character={draft} size={150} />
