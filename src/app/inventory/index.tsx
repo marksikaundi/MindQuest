@@ -10,16 +10,14 @@ import { useInventoryStore } from '@/stores/inventoryStore';
 import type { ItemCategory } from '@/types/game';
 
 const categories: { id: ItemCategory; label: string }[] = [
-  { id: 'character', label: 'Character' },
-  { id: 'accessory', label: 'Accessories' },
   { id: 'home', label: 'Home' },
-  { id: 'collectible', label: 'Collectibles' },
+  { id: 'collectible', label: 'Finds' },
   { id: 'special', label: 'Special' },
 ];
 
 export default function InventoryScreen() {
   const quantities = useInventoryStore((state) => state.quantities);
-  const [category, setCategory] = useState<ItemCategory>('character');
+  const [category, setCategory] = useState<ItemCategory>('home');
   const items = useMemo(
     () => ITEMS.filter((item) => item.category === category && item.id !== 'none'),
     [category],

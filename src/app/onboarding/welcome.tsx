@@ -5,6 +5,7 @@ import { AppText } from '@/components/ui/AppText';
 import { Button } from '@/components/ui/Button';
 import { Screen } from '@/components/ui/Screen';
 import { art } from '@/constants/art';
+import { startAdventure } from '@/game/actions';
 
 export default function WelcomeScreen() {
   return (
@@ -16,7 +17,13 @@ export default function WelcomeScreen() {
         </AppText>
       </View>
       <Image source={art.questland} style={{ width: '100%', height: 280, borderRadius: 28 }} resizeMode="cover" accessibilityIgnoresInvertColors />
-      <Button label="Start Adventure" onPress={() => router.push('/onboarding/character')} />
+      <Button
+        label="Start Adventure"
+        onPress={() => {
+          startAdventure();
+          router.replace('/game');
+        }}
+      />
     </Screen>
   );
 }

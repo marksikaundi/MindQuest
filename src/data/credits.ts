@@ -17,10 +17,4 @@ export const CREDITS = [
     license: 'Original',
     source: 'MindQuest',
   },
-  {
-    name: 'Quaternius character packs',
-    use: 'The live avatar is drawn in the app so hair, skin, and clothes can change. Quaternius CC0 characters stay the reference style for a later 3D traveler, without adding a 3D engine to this version.',
-    license: 'CC0',
-    source: 'quaternius.com',
-  },
 ] as const;

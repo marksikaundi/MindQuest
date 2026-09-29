@@ -5,7 +5,6 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { GameHeader } from '@/components/game/GameHeader';
 import { GreatTree } from '@/components/world/GreatTree';
-import { Avatar } from '@/components/player/Avatar';
 import { AppText } from '@/components/ui/AppText';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
@@ -28,7 +27,6 @@ const actions = [
 export default function QuestlandScreen() {
   const { colors } = useGameTheme();
   const level = usePlayerStore((state) => state.player.level);
-  const character = usePlayerStore((state) => state.character);
   const daily = useDailyView();
   const [shopOpen, setShopOpen] = useState(false);
   const [shopNote, setShopNote] = useState('');
@@ -70,9 +68,6 @@ export default function QuestlandScreen() {
         <View style={{ position: 'absolute', right: 8, top: 64 }}>
           <GreatTree level={level} onPress={() => choose('tree')} />
         </View>
-        <View style={{ position: 'absolute', left: 12, bottom: 108 }}>
-          <Avatar character={character} size={84} />
-        </View>
         <View style={{ position: 'absolute', left: 8, right: 8, bottom: 12, flexDirection: 'row', justifyContent: 'space-between' }}>
           {actions.map((action) => (
             <Pressable
@@ -94,7 +89,7 @@ export default function QuestlandScreen() {
       {shopOpen ? (
         <Card style={{ marginHorizontal: 12, marginBottom: 8, maxHeight: 220 }}>
           {shopNote ? <AppText weight="800">{shopNote}</AppText> : null}
-          {ITEMS.filter((item) => item.shop && item.price > 0).slice(0, 4).map((item) => (
+          {ITEMS.filter((item) => item.shop && item.price > 0 && item.category === 'home').map((item) => (
             <View key={item.id} style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8 }}>
               <AppText weight="800" style={{ flex: 1 }}>
                 {item.name}

@@ -1,7 +1,5 @@
-import { Pressable, View } from 'react-native';
-import { router } from 'expo-router';
+import { View } from 'react-native';
 
-import { Avatar } from '@/components/player/Avatar';
 import { CoinCounter } from '@/components/game/CoinCounter';
 import { XPBar } from '@/components/game/XPBar';
 import { AppText } from '@/components/ui/AppText';
@@ -12,28 +10,11 @@ import { usePlayerStore } from '@/stores/playerStore';
 
 export function GameHeader() {
   const player = usePlayerStore((state) => state.player);
-  const character = usePlayerStore((state) => state.character);
   const { colors } = useGameTheme();
 
   return (
     <View style={{ paddingHorizontal: 16, paddingBottom: 8, gap: 8 }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Open hero"
-          onPress={() => router.push('/character')}
-          style={{ width: 52, height: 52, borderRadius: 26, overflow: 'hidden', backgroundColor: colors.sky, alignItems: 'center' }}>
-          <View style={{ marginTop: -8 }}>
-            <Avatar character={character} size={52} />
-          </View>
-        </Pressable>
-        <View style={{ flex: 1 }}>
-          <AppText weight="800" size={18} numberOfLines={1}>
-            {player.name || 'Explorer'}
-          </AppText>
-          <XPBar totalXp={player.xp} level={player.level} />
-        </View>
-      </View>
+      <XPBar totalXp={player.xp} level={player.level} />
       <View style={{ flexDirection: 'row', gap: 8 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: colors.surface, borderRadius: radius.pill, paddingHorizontal: 12, minHeight: 40 }}>
           <CoinCounter coins={player.coins} />

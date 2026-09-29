@@ -1,4 +1,5 @@
 import { ACHIEVEMENTS } from '@/data/achievements';
+import { defaultCharacter } from '@/data/characters';
 import { getDailyChallenge, todayKey, challengeForDate } from '@/data/daily';
 import { ITEMS, getItem } from '@/data/items';
 import { QUESTS } from '@/data/quests';
@@ -249,6 +250,10 @@ export function visitRegion(regionId: string) {
   const before = useGameStore.getState().stats[region.visitEvent] ?? 0;
   track(region.visitEvent, 1);
   if (before === 0 && region.discoveryReward) grantReward(region.discoveryReward, 'discover');
+}
+
+export function startAdventure() {
+  createAdventure('Explorer', { ...defaultCharacter });
 }
 
 export function createAdventure(name: string, character: Character) {
