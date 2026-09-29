@@ -35,7 +35,6 @@ export default function SettingsScreen() {
       </Card>
       <Card>
         <AppText weight="800">Gameplay</AppText>
-        <AppText color={colors.muted}>Difficulty changes the suggested mini-game level. You can still pick another level inside a game.</AppText>
         <View style={{ flexDirection: 'row', gap: 8, marginTop: 8 }}>
           {(['relaxed', 'standard', 'challenge'] as const).map((level) => (
             <Button key={level} label={level} variant={settings.difficulty === level ? 'primary' : 'ghost'} onPress={() => patch({ difficulty: level satisfies Difficulty })} style={{ flex: 1 }} />

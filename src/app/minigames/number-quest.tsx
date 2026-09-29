@@ -74,8 +74,7 @@ export default function NumberQuestScreen() {
       </View>
       {phase === 'intro' ? (
         <Card>
-          <AppText>Read the pattern, then choose the number that comes next. A wrong answer explains the pattern and lets you continue.</AppText>
-          <View style={{ flexDirection: 'row', gap: 8, marginTop: 12 }}>
+          <View style={{ flexDirection: 'row', gap: 8 }}>
             {(['easy', 'medium', 'hard'] as const).map((level) => (
               <Button key={level} label={level} variant={difficulty === level ? 'primary' : 'ghost'} onPress={() => setDifficulty(level)} style={{ flex: 1 }} />
             ))}
@@ -149,7 +148,6 @@ export default function NumberQuestScreen() {
           <AppText center>Bonus coins {bonus.coins}</AppText>
           <AppText center>Bonus XP {bonus.xp}</AppText>
           <AppText center>Stars earned {bonus.stars}</AppText>
-          <AppText center color={colors.muted}>Each correct answer already added coins and XP.</AppText>
           <Button label="Play Again" onPress={() => start(difficulty)} style={{ marginTop: 12 }} />
           <Button label="Continue" variant="secondary" onPress={() => router.replace('/minigames')} />
         </Card>

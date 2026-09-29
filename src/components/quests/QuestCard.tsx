@@ -19,9 +19,6 @@ export const QuestCard = memo(function QuestCard({ quest }: { quest: Quest }) {
         </AppText>
         <Badge label={quest.completed ? 'Done' : 'Active'} color={quest.completed ? colors.secondary : colors.accent} />
       </View>
-      <AppText color={colors.muted} style={{ marginTop: 6 }}>
-        {quest.description}
-      </AppText>
       <View style={{ marginTop: 12, gap: 8 }}>
         {quest.objectives.map((objective) => {
           const complete = objective.current >= objective.target;
@@ -35,8 +32,8 @@ export const QuestCard = memo(function QuestCard({ quest }: { quest: Quest }) {
           );
         })}
       </View>
-      <AppText size={13} weight="700" color={colors.muted} style={{ marginTop: 10 }}>
-        {done}/{quest.objectives.length} steps · {quest.rewards.coins} coins · {quest.rewards.xp} XP · {quest.rewards.stars} star
+      <AppText size={13} weight="800" style={{ marginTop: 10 }}>
+        {quest.rewards.coins} coins · {quest.rewards.xp} XP
       </AppText>
     </Card>
   );

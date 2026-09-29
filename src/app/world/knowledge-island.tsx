@@ -29,8 +29,6 @@ export default function KnowledgeIslandScreen() {
   return (
     <Screen tabBar>
       <Image source={art.island} style={{ width: '100%', height: 220, borderRadius: 28 }} resizeMode="cover" />
-      <AppText size={28} weight="800">Knowledge Island</AppText>
-      {done ? <AppText>The cottage lantern stays lit. You can travel on.</AppText> : null}
       {!done ? (
         <QuestionRound
           questions={KNOWLEDGE_QUESTIONS}

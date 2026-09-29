@@ -20,7 +20,7 @@ export default function HomeScreen() {
   const home = useGameStore((state) => state.home);
   const { colors } = useGameTheme();
   const [slot, setSlot] = useState<string | null>(null);
-  const [message, setMessage] = useState('Tap a spot, then choose something you own.');
+  const [message, setMessage] = useState('');
 
   const background = home.wallpaper === 'timber' ? art.wood : art.home;
   const night = home.wallpaper === 'night';
@@ -34,7 +34,7 @@ export default function HomeScreen() {
           <Avatar character={character} size={120} />
         </View>
       </ImageBackground>
-      <AppText color={colors.muted}>{message}</AppText>
+      {message ? <AppText weight="800">{message}</AppText> : null}
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
         {HOME_SLOTS.map((item) => {
           const placed = home.slots[item.id];

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
-import { router } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { router, type Href } from 'expo-router';
 
 import { Avatar } from '@/components/player/Avatar';
 import { AppText } from '@/components/ui/AppText';
@@ -73,11 +74,27 @@ export default function CharacterScreen() {
         label="Save Changes"
         onPress={() => setMessage(saveCharacter(draft))}
       />
-      <Button label="Inventory" variant="ghost" onPress={() => router.push('/inventory')} />
-      <Button label="Home" variant="ghost" onPress={() => router.push('/home')} />
-      <Button label="Achievements" variant="ghost" onPress={() => router.push('/achievements')} />
-      <Button label="Settings" variant="ghost" onPress={() => router.push('/settings')} />
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        <Shortcut href="/inventory" icon="briefcase" label="Bag" />
+        <Shortcut href="/home" icon="bed" label="Home" />
+        <Shortcut href="/achievements" icon="trophy" label="Awards" />
+        <Shortcut href="/settings" icon="settings" label="Settings" />
+      </View>
     </Screen>
+  );
+}
+
+function Shortcut({ href, icon, label }: { href: Href; icon: 'briefcase' | 'bed' | 'trophy' | 'settings'; label: string }) {
+  const { colors } = useGameTheme();
+  return (
+    <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={() => router.push(href)} style={{ alignItems: 'center', gap: 6, minWidth: 72 }}>
+      <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center' }}>
+        <Ionicons name={icon} size={24} color={colors.primaryDark} />
+      </View>
+      <AppText size={12} weight="800">
+        {label}
+      </AppText>
+    </Pressable>
   );
 }
 

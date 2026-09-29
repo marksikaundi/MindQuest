@@ -27,9 +27,7 @@ export default function CreativeCityScreen() {
 
   return (
     <Screen tabBar>
-      <Image source={art.city} style={{ width: '100%', height: 220, borderRadius: 28 }} resizeMode="cover" />
-      <AppText size={28} weight="800">Creative City</AppText>
-      <AppText>Pick a banner color. The plaza keeps the one you choose.</AppText>
+      <Image source={art.city} style={{ width: '100%', height: 280, borderRadius: 28 }} resizeMode="cover" />
       <View style={{ flexDirection: 'row', gap: 10 }}>
         {['#E85D75', '#45C4B0', '#FFC857', '#6C63FF'].map((color) => (
           <View key={color} style={{ width: 56, height: 56, borderRadius: 16, backgroundColor: color }} />

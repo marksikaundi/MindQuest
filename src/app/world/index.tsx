@@ -9,11 +9,9 @@ import { Screen } from '@/components/ui/Screen';
 import { art } from '@/constants/art';
 import { openWorldMap } from '@/game/actions';
 import { useRegionViews } from '@/hooks/use-game-data';
-import { useGameTheme } from '@/hooks/use-game-theme';
 
 export default function WorldMapScreen() {
   const regions = useRegionViews();
-  const { colors } = useGameTheme();
 
   useFocusEffect(
     useCallback(() => {
@@ -32,8 +30,7 @@ export default function WorldMapScreen() {
             <AppText size={28} weight="800">
               World map
             </AppText>
-            <Image source={art.map} style={{ width: '100%', height: 240, borderRadius: 28 }} resizeMode="cover" accessibilityIgnoresInvertColors />
-            <AppText color={colors.muted}>Questland is home. Other regions open as you finish quests.</AppText>
+            <Image source={art.map} style={{ width: '100%', height: 180, borderRadius: 28 }} resizeMode="cover" accessibilityIgnoresInvertColors />
           </View>
         }
         renderItem={({ item }) => <RegionCard {...item} />}

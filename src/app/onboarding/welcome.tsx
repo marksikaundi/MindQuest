@@ -20,16 +20,10 @@ export default function WelcomeScreen() {
       <View style={{ alignItems: 'center', gap: 8, marginTop: 12 }}>
         <Image source={art.logo} style={{ width: 120, height: 120, borderRadius: 32 }} accessibilityIgnoresInvertColors />
         <AppText size={32} weight="800" center>
-          Welcome to MindQuest
-        </AppText>
-        <AppText size={18} center color={colors.muted}>
-          Your adventure starts here.
+          MindQuest
         </AppText>
       </View>
-      <Image source={art.questland} style={{ width: '100%', height: 220, borderRadius: 28 }} resizeMode="cover" accessibilityIgnoresInvertColors />
-      <AppText center>
-        Create a traveler, explore Questland, and play short puzzles you can finish in a few minutes.
-      </AppText>
+      <Image source={art.questland} style={{ width: '100%', height: 280, borderRadius: 28 }} resizeMode="cover" accessibilityIgnoresInvertColors />
       <Button label="Start Adventure" onPress={() => router.push('/onboarding/character')} />
       <Button
         label="I Already Have a Game"

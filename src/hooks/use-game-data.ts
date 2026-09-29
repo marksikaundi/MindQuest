@@ -34,27 +34,23 @@ export function useRegionViews() {
     const completed = claimedIds.length;
     return REGIONS.map((region) => {
       const unlocked = region.unlock.type === 'always' || completed >= region.unlock.count;
-      let label = 'Ready to explore';
+      let label = '';
       let value = 0;
       if (region.id === 'puzzle-valley') {
         const count = Math.min(5, stats.complete_puzzle ?? 0);
-        label = `${count}/5 puzzles`;
+        label = `${count}/5`;
         value = count / 5;
       } else if (region.id === 'adventure-forest') {
         const count = Math.min(5, stats.find_hidden_object ?? 0);
-        label = `${count}/5 objects`;
+        label = `${count}/5`;
         value = count / 5;
       } else if (region.id === 'questland') {
         const steps = ['explore_village', 'visit_great_tree', 'open_world_map'] as const;
         const count = steps.filter((event) => (stats[event] ?? 0) > 0).length;
-        label = `${count}/3 village steps`;
+        label = `${count}/3`;
         value = count / 3;
       } else if (visited.includes(region.id)) {
-        label = 'Visited';
         value = 1;
-      } else if (unlocked) {
-        label = 'Not visited yet';
-        value = 0;
       }
       return { ...region, unlocked, progressLabel: label, progressValue: value };
     });

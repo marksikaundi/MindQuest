@@ -46,7 +46,6 @@ export default function MemoryFlipScreen() {
   const [seconds, setSeconds] = useState(0);
   const [result, setResult] = useState<ReturnType<typeof memoryResult> | null>(null);
   const { width } = useWindowDimensions();
-  const { colors } = useGameTheme();
   const reduced = useReducedMotion();
 
   useEffect(() => {
@@ -125,11 +124,7 @@ export default function MemoryFlipScreen() {
       </View>
       {phase === 'intro' ? (
         <Card>
-          <AppText>Tap two cards. Matches stay face up. Misses turn back over.</AppText>
-          <AppText color={colors.muted} style={{ marginTop: 8 }}>
-            Easy is 6 cards, medium is 12, and hard is 18. Shapes are unique, so you do not need color alone.
-          </AppText>
-          <View style={{ flexDirection: 'row', gap: 8, marginTop: 12 }}>
+          <View style={{ flexDirection: 'row', gap: 8 }}>
             {(['easy', 'medium', 'hard'] as const).map((level) => (
               <Button key={level} label={level} variant={difficulty === level ? 'primary' : 'ghost'} onPress={() => setDifficulty(level)} style={{ flex: 1 }} />
             ))}

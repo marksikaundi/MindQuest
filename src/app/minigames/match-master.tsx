@@ -139,9 +139,7 @@ export default function MatchMasterScreen() {
       </View>
       {phase === 'intro' ? (
         <Card>
-          <AppText>Match the target. Relaxed mode asks only for the shape. Standard adds color. Challenge adds a pattern too.</AppText>
-          <AppText color={colors.muted} style={{ marginTop: 8 }}>The pace stays calm. A timer appears only in Challenge when timers are on.</AppText>
-          <View style={{ gap: 8, marginTop: 12 }}>
+          <View style={{ gap: 8 }}>
             {(['relaxed', 'standard', 'challenge'] as const).map((level) => (
               <Button key={level} label={level} variant={mode === level ? 'primary' : 'ghost'} onPress={() => setMode(level)} />
             ))}

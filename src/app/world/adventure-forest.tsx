@@ -1,11 +1,11 @@
 import { useCallback, useState } from 'react';
 import { Image, Pressable, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect } from 'expo-router';
 
 import { MemoryGlyph } from '@/components/minigames/Symbols';
 import { AppText } from '@/components/ui/AppText';
 import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
 import { Screen } from '@/components/ui/Screen';
 import { art } from '@/constants/art';
 import { findHiddenObject, finishForestSearch, visitRegion } from '@/game/actions';
@@ -28,7 +28,7 @@ export default function AdventureForestScreen() {
   const [found, setFound] = useState<string[]>([]);
   const [hint, setHint] = useState<string | null>(null);
   const [rewarded, setRewarded] = useState(false);
-  const [message, setMessage] = useState('Find 5 hidden objects.');
+  const [message, setMessage] = useState('');
 
   useFocusEffect(
     useCallback(() => {
@@ -50,7 +50,7 @@ export default function AdventureForestScreen() {
 
   const remaining = objects.filter((object) => !found.includes(object.id));
 
-  const collect = (id: string, label: string) => {
+  const collect = (id: string) => {
     if (found.includes(id)) return;
     const next = [...found, id];
     setFound(next);
@@ -59,19 +59,15 @@ export default function AdventureForestScreen() {
     if (next.length === objects.length && !rewarded) {
       const first = finishForestSearch();
       setRewarded(true);
-      setMessage(first ? 'The chest opens. Coins, XP, and a star are yours.' : 'You searched the grove again and found a smaller reward.');
+      setMessage(first ? 'Chest opened' : 'Smaller reward');
       return;
     }
-    setMessage(`${label} found. ${next.length}/5`);
+    setMessage(`${next.length}/5`);
   };
 
   return (
-    <Screen tabBar={false}>
-      <AppText size={28} weight="800">
-        Adventure Forest
-      </AppText>
-      <AppText color={colors.muted}>{message}</AppText>
-      <View style={{ height: 460, borderRadius: 28, overflow: 'hidden' }}>
+    <Screen tabBar={false} scroll={false} padded={false}>
+      <View style={{ flex: 1, margin: 12, borderRadius: 28, overflow: 'hidden' }}>
         <Image source={art.forest} style={{ width: '100%', height: '100%' }} resizeMode="cover" accessibilityIgnoresInvertColors />
         {objects.map((object) => {
           const taken = found.includes(object.id);
@@ -81,7 +77,7 @@ export default function AdventureForestScreen() {
               key={object.id}
               accessibilityRole="button"
               accessibilityLabel={taken ? `${object.label} found` : 'Hidden object'}
-              onPress={() => collect(object.id, object.label)}
+              onPress={() => collect(object.id)}
               style={{
                 position: 'absolute',
                 top: object.top,
@@ -100,30 +96,38 @@ export default function AdventureForestScreen() {
             </Pressable>
           );
         })}
+        <View style={{ position: 'absolute', top: 14, alignSelf: 'center', minHeight: 40, paddingHorizontal: 14, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.94)', justifyContent: 'center' }}>
+          <AppText weight="800">{message || `${found.length}/5`}</AppText>
+        </View>
+        <View style={{ position: 'absolute', left: 12, right: 12, bottom: 14, flexDirection: 'row', justifyContent: 'space-between' }}>
+          <ForestAction icon="bulb" label="Hint" onPress={() => setHint(remaining[0]?.id ?? null)} disabled={remaining.length === 0} />
+          <ForestAction
+            icon="refresh"
+            label="Again"
+            onPress={() => {
+              setFound([]);
+              setRewarded(false);
+              setHint(null);
+              setMessage('');
+            }}
+          />
+          <ForestAction icon="map" label="Map" onPress={() => router.back()} />
+        </View>
       </View>
-      <Card>
-        <AppText weight="800">
-          {found.length}/5 objects
-        </AppText>
-        <AppText color={colors.muted}>Look for a key, leaf, star, mushroom, and crystal. Shapes stay visible so color is not the only clue.</AppText>
-        <Button
-          label="Hint"
-          variant="secondary"
-          onPress={() => setHint(remaining[0]?.id ?? null)}
-          disabled={remaining.length === 0}
-        />
-        <Button
-          label="Search again"
-          variant="ghost"
-          onPress={() => {
-            setFound([]);
-            setRewarded(false);
-            setHint(null);
-            setMessage('A new breeze moves the leaves. Find the five objects again.');
-          }}
-        />
-        <Button label="Back to map" variant="ghost" onPress={() => router.back()} />
-      </Card>
     </Screen>
+  );
+}
+
+function ForestAction({ icon, label, onPress, disabled }: { icon: 'bulb' | 'refresh' | 'map'; label: string; onPress: () => void; disabled?: boolean }) {
+  const { colors } = useGameTheme();
+  return (
+    <Pressable accessibilityRole="button" accessibilityLabel={label} disabled={disabled} onPress={onPress} style={{ alignItems: 'center', gap: 4, opacity: disabled ? 0.45 : 1 }}>
+      <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: 'rgba(255,255,255,0.94)', alignItems: 'center', justifyContent: 'center' }}>
+        <Ionicons name={icon} size={26} color={colors.primaryDark} />
+      </View>
+      <AppText size={12} weight="800" color="#FFFFFF">
+        {label}
+      </AppText>
+    </Pressable>
   );
 }

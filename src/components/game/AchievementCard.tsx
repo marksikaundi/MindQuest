@@ -18,7 +18,6 @@ const icons = {
 
 export const AchievementCard = memo(function AchievementCard({
   title,
-  description,
   icon,
   current,
   target,
@@ -45,9 +44,6 @@ export const AchievementCard = memo(function AchievementCard({
             </AppText>
             <Badge label={unlocked ? 'Unlocked' : 'Locked'} color={unlocked ? colors.secondary : colors.line} textColor={unlocked ? '#FFFFFF' : colors.text} />
           </View>
-          <AppText size={13} color={colors.muted}>
-            {description}
-          </AppText>
           <AppText size={12} weight="700">
             {current}/{target}
           </AppText>
