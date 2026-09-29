@@ -1,18 +1,29 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useColorScheme } from 'react-native';
+import { useEffect } from 'react';
+import { StatusBar } from 'expo-status-bar';
+import { Stack } from 'expo-router';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-import { AnimatedSplashOverlay } from '@/components/animated-icon';
-import AppTabs from '@/components/app-tabs';
+import { CelebrationHost } from '@/components/game/CelebrationHost';
+import { ErrorBoundary } from '@/components/game/ErrorBoundary';
+import { MusicPlayer } from '@/components/game/MusicPlayer';
+import { useReducedMotion } from '@/hooks/use-game-theme';
+import { loadGameState } from '@/utils/storage';
 
-SplashScreen.preventAutoHideAsync();
+export default function RootLayout() {
+  const reduced = useReducedMotion();
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  useEffect(() => {
+    void loadGameState();
+  }, []);
+
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <AnimatedSplashOverlay />
-      <AppTabs />
-    </ThemeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ErrorBoundary>
+        <StatusBar style="dark" />
+        <MusicPlayer />
+        <Stack screenOptions={{ headerShown: false, animation: reduced ? 'none' : 'fade' }} />
+        <CelebrationHost />
+      </ErrorBoundary>
+    </GestureHandlerRootView>
   );
 }
