@@ -23,7 +23,7 @@ export default function SettingsScreen() {
   const patch = (partial: Partial<Settings>) => useSettingsStore.setState(partial);
 
   return (
-    <Screen>
+    <Screen tabBar>
       <AppText size={28} weight="800">About</AppText>
       <AppText weight="800">Play. Explore. Learn. Grow.</AppText>
       {note ? <AppText>{note}</AppText> : null}

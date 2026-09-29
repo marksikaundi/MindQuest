@@ -65,13 +65,12 @@ export default function HomeScreen() {
       <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
         <HomeLink href="/inventory" icon="briefcase" label="Bag" />
         <HomeLink href="/achievements" icon="ribbon" label="Awards" />
-        <HomeLink href="/settings" icon="information-circle" label="About" />
       </View>
     </Screen>
   );
 }
 
-function HomeLink({ href, icon, label }: { href: Href; icon: 'briefcase' | 'ribbon' | 'information-circle'; label: string }) {
+function HomeLink({ href, icon, label }: { href: Href; icon: 'briefcase' | 'ribbon'; label: string }) {
   const { colors } = useGameTheme();
   return (
     <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={() => router.push(href)} style={{ alignItems: 'center', gap: 6, minWidth: 72 }}>
